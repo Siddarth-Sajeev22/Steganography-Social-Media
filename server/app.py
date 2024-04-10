@@ -9,7 +9,7 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = 'image'
+UPLOAD_FOLDER = 'public/assets'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(filename):
@@ -38,10 +38,10 @@ def encode():
         img = steg.encode_text(data)
 
         # Save the steganography image
-        stego_filename = os.path.join(UPLOAD_FOLDER, 'stego_' + file.filename)
+        stego_filename = os.path.join(UPLOAD_FOLDER, file.filename)
         cv2.imwrite(stego_filename, img)
 
-        return jsonify({'stego_image': stego_filename}), 200
+        return jsonify({'stego_image': file.filename}), 200
     else:
         return jsonify({'error': 'Invalid file or file extension not allowed'}), 400
 

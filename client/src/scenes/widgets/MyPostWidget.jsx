@@ -27,6 +27,7 @@ import { setPosts } from "state";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
+  const [encodedImage, setEncodedImage] = useState('');
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
   const [post, setPost] = useState("");
@@ -37,25 +38,45 @@ const MyPostWidget = ({ picturePath }) => {
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 
-  const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", post);
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
-    }
+const handlePost = async () => {
+  const formData = new FormData();
+  formData.append("userId", _id);
+  formData.append("description", post);
 
-    const response = await fetch(`http://localhost:3001/posts`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-    const posts = await response.json();
-    dispatch(setPosts({ posts }));
-    setImage(null);
-    setPost("");
-  };
+  if (image) {
+    // Perform steganography encoding on the image before uploading
+    const stegoImage = await encodeImage(image);
+    console.log(stegoImage);
+    formData.append("picturePath", stegoImage.stego_image);
+  }
+
+  const response = await fetch(`http://localhost:3001/posts`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  
+  const posts = await response.json();
+  dispatch(setPosts({ posts }));
+  setImage(null);
+  setPost("");
+};
+
+const encodeImage = async (image, ) => {
+  const formData = new FormData();
+  formData.append("file", image);
+  formData.append("data", post );
+
+  // Send the image to Flask server for steganography encoding
+  const response = await fetch("http://localhost:5000/encode", {
+    method: "POST",
+    body: formData,
+  });
+
+  const a = await response.json();
+  
+  return a ;
+};
 
   return (
     <WidgetWrapper>
