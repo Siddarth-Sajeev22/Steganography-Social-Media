@@ -108,7 +108,7 @@ class LSBSteg():
             c = ord(char)
             self.put_binary_value(self.byteValue(c))
         return self.image
-       
+
     def decode_text(self):
         ls = self.read_bits(16) #Read the text size in bytes
         l = int(ls,2)

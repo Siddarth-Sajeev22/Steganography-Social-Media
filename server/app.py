@@ -27,7 +27,11 @@ def encode():
     # Check if file has allowed extension
     if file and allowed_file(file.filename):
         # Save the uploaded image
-        filename = os.path.join(UPLOAD_FOLDER, file.filename)
+        lossy_formats = ["jpeg", "jpg"]
+        filen, ext = file.filename.rsplit(".", 1) 
+        newfile =  filen + ".png"
+
+        filename = os.path.join(UPLOAD_FOLDER, newfile)
         file.save(filename)
 
         # Read the image using OpenCV
@@ -38,10 +42,10 @@ def encode():
         img = steg.encode_text(data)
 
         # Save the steganography image
-        stego_filename = os.path.join(UPLOAD_FOLDER, file.filename)
+        stego_filename = os.path.join(UPLOAD_FOLDER, newfile)
         cv2.imwrite(stego_filename, img)
 
-        return jsonify({'stego_image': file.filename}), 200
+        return jsonify({'stego_image': newfile}), 200
     else:
         return jsonify({'error': 'Invalid file or file extension not allowed'}), 400
 
