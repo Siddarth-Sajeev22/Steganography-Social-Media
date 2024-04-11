@@ -5,6 +5,7 @@ import {
   ShareOutlined,
 } from "@mui/icons-material";
 
+import {Link } from 'react-router-dom'; 
 import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
@@ -88,10 +89,11 @@ const PostWidget = ({
             <Typography>{comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
+        <Link to = {`/decode/${picturePath}`}>
+          <IconButton >
+            Decode
+          </IconButton>
+        </Link>
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">

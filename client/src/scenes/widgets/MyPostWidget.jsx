@@ -66,8 +66,7 @@ const encodeImage = async (image, ) => {
   const formData = new FormData();
   formData.append("file", image);
   formData.append("data", post );
-
-  // Send the image to Flask server for steganography encoding
+  console.log(image);   // Send the image to Flask server for steganography encoding
   const response = await fetch("http://localhost:5000/encode", {
     method: "POST",
     body: formData,
