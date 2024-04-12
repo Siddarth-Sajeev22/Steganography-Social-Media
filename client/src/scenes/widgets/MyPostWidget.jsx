@@ -46,10 +46,9 @@ const handlePost = async () => {
   if (image) {
     // Perform steganography encoding on the image before uploading
     const stegoImage = await encodeImage(image);
-    console.log(stegoImage);
     formData.append("picturePath", stegoImage.stego_image);
+    formData.append("accessKey", stegoImage.access_key);
   }
-
   const response = await fetch(`http://localhost:3001/posts`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },

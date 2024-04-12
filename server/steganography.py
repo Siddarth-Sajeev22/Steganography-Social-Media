@@ -100,13 +100,14 @@ class LSBSteg():
             binval = "0"+binval
         return binval
 
-    def encode_text(self, txt):
-        l = len(txt)
-        binl = self.binary_value(l, 16) #Length coded on 2 bytes so the text size can be up to 65536 bytes long
-        self.put_binary_value(binl) #Put text length coded on 4 bytes
-        for char in txt: #And put all the chars
-            c = ord(char)
-            self.put_binary_value(self.byteValue(c))
+    def encode_text(self, encrypted_text):
+    # Embed the encrypted text into the image
+        l = len(encrypted_text)
+        binl = self.binary_value(l, 16)  # Length coded on 2 bytes
+        self.put_binary_value(binl)  # Put text length coded on 4 bytes
+        for byte in encrypted_text:  # Put all the bytes of the encrypted text
+            byte = byte if isinstance(byte, int) else ord(byte)
+            self.put_binary_value(self.byteValue(byte))
         return self.image
 
     def decode_text(self):

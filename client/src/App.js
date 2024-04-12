@@ -29,7 +29,7 @@ function App() {
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
             />
-             <Route
+            <Route
               path="/decode/:imageUrl"
               element={isAuth ? <DecodePage /> : <Navigate to="/" />}
             />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 import { IconButton, Grid, Card, CardContent, Typography, TextField, CircularProgress, Button } from "@mui/material";
 
 const DecodePage = () => {
@@ -7,6 +8,9 @@ const DecodePage = () => {
     const [decodedData, setDecodedData] = useState("");
     const [accessKey, setAccessKey] = useState("");
     const [loading, setLoading] = useState(false);
+    useEffect(() => {
+        console.log(accessKey)
+    }, [accessKey])
 
     const decodeImage = async () => {
         setLoading(true);
@@ -22,6 +26,7 @@ const DecodePage = () => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('accessKey', accessKey);
+            
 
             // Send the FormData to the decoding endpoint
             const res = await fetch("http://localhost:5000/decode", {
