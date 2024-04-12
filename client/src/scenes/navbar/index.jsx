@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   IconButton,
@@ -9,6 +9,10 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Popover,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import {
   Search,
@@ -38,8 +42,34 @@ const Navbar = () => {
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [notifications, setNotifications] = useState([]);
 
   const fullName = `${user.firstName} ${user.lastName}`;
+  useEffect(() => {
+    fetchNotifications();
+  }, [])
+  
+  const handleNotificationsClick = (event) => {
+    // Fetch notifications when the notifications button is clicked
+    fetchNotifications();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseNotifications = () => {
+    setAnchorEl(null);
+  };
+
+  const fetchNotifications = () => {
+    // Simulated fetch notifications function
+    const dummyNotifications = [
+      { id: 1, message: "Notification 1" },
+      { id: 2, message: "Notification 2" },
+      { id: 3, message: "Notification 3" },
+    ];
+    setNotifications(dummyNotifications);
+  };
+
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -84,7 +114,13 @@ const Navbar = () => {
             )}
           </IconButton>
           <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
+          <IconButton onClick={handleNotificationsClick}>
+            <Notifications sx={{ fontSize: "25px" }} />
+            {/* Display notifications count or indicator */}
+            {notifications.length > 0 && (
+              <span>{notifications.length}</span>
+            )}
+          </IconButton>
           <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
             <Select
@@ -159,7 +195,13 @@ const Navbar = () => {
               )}
             </IconButton>
             <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
+            <IconButton onClick={handleNotificationsClick}>
+              <Notifications sx={{ fontSize: "25px" }} />
+              {/* Display notifications count or indicator */}
+              {notifications.length > 0 && (
+                <span>{notifications.length}</span>
+              )}
+            </IconButton>
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>
               <Select
@@ -190,6 +232,32 @@ const Navbar = () => {
           </FlexBetween>
         </Box>
       )}
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleCloseNotifications}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        <Box p={2}>
+          <Typography variant="h6" gutterBottom>
+            Notifications
+          </Typography>
+          <List>
+            {notifications.map((notification) => (
+              <ListItem key={notification.id}>
+                <ListItemText primary={notification.message} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Popover>
     </FlexBetween>
   );
 };
