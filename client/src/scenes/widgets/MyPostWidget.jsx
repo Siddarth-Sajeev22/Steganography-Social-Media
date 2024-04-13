@@ -16,17 +16,25 @@ import {
   Button,
   IconButton,
   useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControlLabel,
+  Checkbox
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [selectedFriends, setSelectedFriends] = useState([]);
   const [encodedImage, setEncodedImage] = useState('');
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
@@ -37,6 +45,49 @@ const MyPostWidget = ({ picturePath }) => {
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
+  const [friends, setFriends] = useState([]);
+  const [showFriendsList, setShowFriendsList] = useState(false); // State to control visibility of friends list
+  useEffect(() => {
+    console.log(friends);
+  }, [friends]);
+  
+  const handleTag = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/users/${_id}/friends`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setFriends(data);
+      setShowFriendsList(true); // Set showFriendsList to true when friends are fetched
+      setOpen(true);
+    } catch (error) {
+      console.error('Error fetching friend details:', error);
+    }
+  };
+
+  const handleFriendToggle = (friendId) => () => {
+    const currentIndex = selectedFriends.indexOf(friendId);
+    const newSelectedFriends = [...selectedFriends];
+
+    if (currentIndex === -1) {
+      newSelectedFriends.push(friendId);
+    } else {
+      newSelectedFriends.splice(currentIndex, 1);
+    }
+
+    setSelectedFriends(newSelectedFriends);
+  };
+
+  const handleTagAction = () => {
+    // Perform tagging action here using selectedFriends
+    console.log("Selected Friends:", selectedFriends);
+    setOpen(false);
+  };
 
 const handlePost = async () => {
   const formData = new FormData();
@@ -150,29 +201,26 @@ const encodeImage = async (image, ) => {
           </Typography>
         </FlexBetween>
 
-        {isNonMobileScreens ? (
-          <>
-            <FlexBetween gap="0.25rem">
-              <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Clip</Typography>
-            </FlexBetween>
+        {/* {friends.length >0 && ( // Conditionally render friends list only if showFriendsList is true
+          <ul>
+            {friends.map(friend => (
+              <li key={friend.id}>{friend.firstName}</li>
+            ))}
+          </ul>
+        )} */}
 
-            <FlexBetween gap="0.25rem">
-              <AttachFileOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Attachment</Typography>
-            </FlexBetween>
-
-            <FlexBetween gap="0.25rem">
-              <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Audio</Typography>
-            </FlexBetween>
-          </>
-        ) : (
-          <FlexBetween gap="0.25rem">
-            <MoreHorizOutlined sx={{ color: mediumMain }} />
-          </FlexBetween>
-        )}
-
+        <Button
+          disabled={!post}
+          onClick={handleTag}
+          sx={{
+            color: palette.background.alt,
+            backgroundColor: palette.primary.main,
+            borderRadius: "3rem",
+          }}
+        >
+          Tag
+        </Button>
+        
         <Button
           disabled={!post}
           onClick={handlePost}
@@ -185,6 +233,32 @@ const encodeImage = async (image, ) => {
           POST
         </Button>
       </FlexBetween>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Select Friends</DialogTitle>
+        <DialogContent>
+          {friends.map((friend) => (
+            <FormControlLabel
+              key={friend.id}
+              control={
+                <Checkbox
+                  checked={selectedFriends.indexOf(friend.id) !== -1}
+                  onChange={handleFriendToggle(friend.id)}
+                />
+              }
+              label={friend.firstName}
+            />
+          ))}
+          {friends.length === 0 && (
+            <Typography>No friends available to tag.</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleTagAction} variant="contained" color="primary">
+            Tag
+          </Button>
+        </DialogActions>
+      </Dialog>
     </WidgetWrapper>
   );
 };
