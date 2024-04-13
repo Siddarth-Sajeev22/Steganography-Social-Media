@@ -34,9 +34,11 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const { _id } = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
+  const token = useSelector((state) => state.token);
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
@@ -49,6 +51,11 @@ const Navbar = () => {
   useEffect(() => {
     fetchNotifications();
   }, [])
+
+  useEffect(() => {
+    console.log(notifications)
+  }, [notifications])
+  
   
   const handleNotificationsClick = (event) => {
     // Fetch notifications when the notifications button is clicked
@@ -60,14 +67,14 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  const fetchNotifications = () => {
-    // Simulated fetch notifications function
-    const dummyNotifications = [
-      { id: 1, message: "Notification 1" },
-      { id: 2, message: "Notification 2" },
-      { id: 3, message: "Notification 3" },
-    ];
-    setNotifications(dummyNotifications);
+  const fetchNotifications = async () => {
+    const response = await fetch(`http://localhost:3001/users/${_id}/notifications`, {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+    
+  });
+    const notification = await response.json();
+    setNotifications(notification);
   };
 
 
@@ -250,11 +257,14 @@ const Navbar = () => {
             Notifications
           </Typography>
           <List>
-            {notifications.map((notification) => (
-              <ListItem key={notification.id}>
-                <ListItemText primary={notification.message} />
-              </ListItem>
-            ))}
+                {notifications.map((notification) => (
+                  <ListItem key={notification.accessKey}>
+                    <ListItemText
+                      primary={`Access Key: ${notification.accessKey}`}
+                      secondary={`Picture Path: ${notification.picturePath}`}
+                    />
+                  </ListItem>
+                ))}
           </List>
         </Box>
       </Popover>

@@ -29,7 +29,23 @@ export const getUserFriends = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+export const getNotifications = async (req, res) => {
+  try {
+    const userId = req.params.id; // Get the user ID from the URL params
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      // If user not found, return 404 Not Found error
+      return res.status(404).json({ message: "User not found" });
+    }
 
+    // Return notifications for the user
+    res.status(200).json(user.notifications);
+  } catch (err) {
+    // Handle any errors and return appropriate response
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 /* UPDATE */
 export const addRemoveFriend = async (req, res) => {
   try {
@@ -61,3 +77,5 @@ export const addRemoveFriend = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+

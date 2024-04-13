@@ -4,8 +4,25 @@ import User from "../models/User.js";
 /* CREATE */
 export const createPost = async (req, res) => {
   try {
-    const { userId, description, picturePath, accessKey } = req.body;
+    const { userId, description, picturePath, accessKey, taggedUsers } = req.body;
     const user = await User.findById(userId);
+    const parsedTaggedUsers = Array.isArray(taggedUsers) ? taggedUsers : JSON.parse(taggedUsers);
+    // Iterate through each tagged user ID
+    for (const taggedUserId of parsedTaggedUsers) {
+      // Find the user corresponding to the tagged user ID
+      const taggedUser = await User.findById(taggedUserId);
+
+      // Add the access key and picture path to the user's notification array
+      taggedUser.notifications.push({
+        accessKey,
+        picturePath
+      });
+
+      // Save the changes to the user's model
+      await taggedUser.save();
+    }
+
+    // Create the new post
     const newPost = new Post({
       userId,
       firstName: user.firstName,
@@ -16,16 +33,19 @@ export const createPost = async (req, res) => {
       picturePath,
       likes: {},
       comments: [],
-      accessKey
+      accessKey,
+      taggedUsers // Add the array of tagged users to the post
     });
     await newPost.save();
 
-    const post = await Post.find();
-    res.status(201).json(post);
+    // Fetch all posts and send them in the response
+    const posts = await Post.find();
+    res.status(201).json(posts);
   } catch (err) {
     res.status(409).json({ message: err.message });
   }
 };
+
 
 /* READ */
 export const getFeedPosts = async (req, res) => {

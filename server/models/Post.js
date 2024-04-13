@@ -26,7 +26,11 @@ const postSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
-    accessKey : String 
+    accessKey : String ,
+    taggedUsers:{
+      type:Array,
+      default:[]
+    }
   },
   { timestamps: true }
 );

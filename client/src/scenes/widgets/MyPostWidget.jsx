@@ -50,7 +50,10 @@ const MyPostWidget = ({ picturePath }) => {
   useEffect(() => {
     console.log(friends);
   }, [friends]);
-  
+  useEffect(() => {
+    console.log(selectedFriends);
+  }, [selectedFriends]);
+ 
   const handleTag = async () => {
     try {
       const response = await fetch(`http://localhost:3001/users/${_id}/friends`,
@@ -70,18 +73,17 @@ const MyPostWidget = ({ picturePath }) => {
     }
   };
 
-  const handleFriendToggle = (friendId) => () => {
-    const currentIndex = selectedFriends.indexOf(friendId);
-    const newSelectedFriends = [...selectedFriends];
-
-    if (currentIndex === -1) {
-      newSelectedFriends.push(friendId);
-    } else {
-      newSelectedFriends.splice(currentIndex, 1);
-    }
-
-    setSelectedFriends(newSelectedFriends);
+  const handleFriendToggle = (friendId) => (event) => {
+    const isChecked = event.target.checked;
+    setSelectedFriends((prevSelected) => {
+      if (isChecked) {
+        return [...prevSelected, friendId]; // Add friendId to the array
+      } else {
+        return prevSelected.filter((id) => id !== friendId); // Remove friendId from the array
+      }
+    });
   };
+  
 
   const handleTagAction = () => {
     // Perform tagging action here using selectedFriends
@@ -93,6 +95,7 @@ const handlePost = async () => {
   const formData = new FormData();
   formData.append("userId", _id);
   formData.append("description", post);
+  formData.append("taggedUsers", JSON.stringify(selectedFriends));
 
   if (image) {
     // Perform steganography encoding on the image before uploading
@@ -100,6 +103,7 @@ const handlePost = async () => {
     formData.append("picturePath", stegoImage.stego_image);
     formData.append("accessKey", stegoImage.access_key);
   }
+  
   const response = await fetch(`http://localhost:3001/posts`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
@@ -238,11 +242,11 @@ const encodeImage = async (image, ) => {
         <DialogContent>
           {friends.map((friend) => (
             <FormControlLabel
-              key={friend.id}
+              key={friend._id}
               control={
                 <Checkbox
-                  checked={selectedFriends.indexOf(friend.id) !== -1}
-                  onChange={handleFriendToggle(friend.id)}
+                  checked={selectedFriends.indexOf(friend._id) !== -1}
+                  onChange={handleFriendToggle(friend._id)}
                 />
               }
               label={friend.firstName}
