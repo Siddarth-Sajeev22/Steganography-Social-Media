@@ -26,7 +26,7 @@ import {
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 
 const Navbar = () => {
@@ -52,11 +52,6 @@ const Navbar = () => {
     fetchNotifications();
   }, [])
 
-  useEffect(() => {
-    console.log(notifications)
-  }, [notifications])
-  
-  
   const handleNotificationsClick = (event) => {
     // Fetch notifications when the notifications button is clicked
     fetchNotifications();
@@ -69,12 +64,16 @@ const Navbar = () => {
 
   const fetchNotifications = async () => {
     const response = await fetch(`http://localhost:3001/users/${_id}/notifications`, {
-    method: "GET",
-    headers: { Authorization: `Bearer ${token}` },
-    
-  });
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+
+    });
     const notification = await response.json();
     setNotifications(notification);
+  };
+
+  const copyAccessKey = (accessKey) => {
+    navigator.clipboard.writeText(accessKey)
   };
 
 
@@ -257,14 +256,24 @@ const Navbar = () => {
             Notifications
           </Typography>
           <List>
-                {notifications.map((notification) => (
-                  <ListItem key={notification.accessKey}>
-                    <ListItemText
-                      primary={`Access Key: ${notification.accessKey}`}
-                      secondary={`Picture Path: ${notification.picturePath}`}
-                    />
-                  </ListItem>
-                ))}
+            {notifications.map((notification) => (
+              <ListItem
+                key={notification.accessKey}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: '#f0f0f0', // Change to your desired grey color
+                  },
+                }}
+                onClick={copyAccessKey(notification.accessKey)}
+              >
+                <Link to={`/decode/${notification.picturePath}`} >
+                  <ListItemText
+                    primary={`You have been granted access key: ${notification.accessKey}`}
+                    secondary={`for picture path: ${notification.picturePath}`}
+                  />
+                </Link>
+              </ListItem>
+            ))}
           </List>
         </Box>
       </Popover>
