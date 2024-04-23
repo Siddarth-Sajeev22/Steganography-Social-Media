@@ -12,7 +12,7 @@ function Landing() {
     return (
         <div className = "landing">
             <Link to={"/login"}>
-                <button className="login-button">Login</button>
+                <button className="login-button">LOGIN</button>
             </Link>
 
             <div className="text-container">

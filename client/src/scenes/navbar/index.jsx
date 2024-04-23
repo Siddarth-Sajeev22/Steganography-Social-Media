@@ -92,9 +92,9 @@ const Navbar = () => {
             },
           }}
         >
-          Sociopedia
+          Cipher Hide
         </Typography>
-        {isNonMobileScreens && (
+        {/* {isNonMobileScreens && (
           <FlexBetween
             backgroundColor={neutralLight}
             borderRadius="9px"
@@ -106,7 +106,7 @@ const Navbar = () => {
               <Search />
             </IconButton>
           </FlexBetween>
-        )}
+        )} */}
       </FlexBetween>
 
       {/* DESKTOP NAV */}
@@ -119,7 +119,7 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
+          {/* <Message sx={{ fontSize: "25px" }} /> */}
           <IconButton onClick={handleNotificationsClick}>
             <Notifications sx={{ fontSize: "25px" }} />
             {/* Display notifications count or indicator */}
@@ -127,7 +127,7 @@ const Navbar = () => {
               <span>{notifications.length}</span>
             )}
           </IconButton>
-          <Help sx={{ fontSize: "25px" }} />
+          {/* <Help sx={{ fontSize: "25px" }} /> */}
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}
@@ -200,7 +200,7 @@ const Navbar = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
+            {/* <Message sx={{ fontSize: "25px" }} /> */}
             <IconButton onClick={handleNotificationsClick}>
               <Notifications sx={{ fontSize: "25px" }} />
               {/* Display notifications count or indicator */}
@@ -208,7 +208,7 @@ const Navbar = () => {
                 <span>{notifications.length}</span>
               )}
             </IconButton>
-            <Help sx={{ fontSize: "25px" }} />
+            {/* <Help sx={{ fontSize: "25px" }} /> */}
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}

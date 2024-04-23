@@ -47,6 +47,7 @@ const MyPostWidget = ({ picturePath }) => {
   const medium = palette.neutral.medium;
   const [friends, setFriends] = useState([]);
   const [showFriendsList, setShowFriendsList] = useState(false); // State to control visibility of friends list
+  const [hiddenData,setHidden]=useState("");
   useEffect(() => {
     console.log(friends);
   }, [friends]);
@@ -114,12 +115,13 @@ const handlePost = async () => {
   dispatch(setPosts({ posts }));
   setImage(null);
   setPost("");
+  setHidden("");
 };
 
 const encodeImage = async (image, ) => {
   const formData = new FormData();
   formData.append("file", image);
-  formData.append("data", post );
+  formData.append("data", hiddenData );
   console.log(image);   // Send the image to Flask server for steganography encoding
   const response = await fetch("http://localhost:5000/encode", {
     method: "POST",
@@ -146,6 +148,7 @@ const encodeImage = async (image, ) => {
             padding: "1rem 2rem",
           }}
         />
+        
       </FlexBetween>
       {isImage && (
         <Box
@@ -189,6 +192,18 @@ const encodeImage = async (image, ) => {
               </FlexBetween>
             )}
           </Dropzone>
+          <InputBase
+          placeholder="Data to be hidden"
+          onChange={(e) => setHidden(e.target.value)}
+          value={hiddenData}
+          sx={{
+            marginTop:"2rem",
+            width: "100%",
+            backgroundColor: palette.neutral.light,
+            borderRadius: "2rem",
+            padding: "1rem 2rem",
+          }}
+        />
         </Box>
       )}
 
