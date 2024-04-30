@@ -67,6 +67,8 @@ export const getUserPosts = async (req, res) => {
   }
 };
 
+
+
 /* UPDATE */
 export const likePost = async (req, res) => {
   try {
@@ -90,5 +92,24 @@ export const likePost = async (req, res) => {
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(404).json({ message: err.message });
+  }
+};
+
+export const getAccessKey = async (req, res) => {
+  try {
+    const { picturePath } = req.params;
+    console.log(picturePath); 
+    // Find the access key for the specified picture path
+    const post = await Post.findOne({ picturePath });
+    
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const accessKey = post.accessKey;
+    
+    res.status(200).json({ accessKey });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

@@ -72,9 +72,9 @@ const Navbar = () => {
     setNotifications(notification);
   };
 
-  const copyAccessKey = (accessKey) => {
-    navigator.clipboard.writeText(accessKey)
-  };
+  // const copyAccessKey = (accessKey) => {
+  //   navigator.clipboard.writeText(accessKey)
+  // };
 
 
   return (
@@ -264,11 +264,10 @@ const Navbar = () => {
                     backgroundColor: '#f0f0f0', // Change to your desired grey color
                   },
                 }}
-                onClick={copyAccessKey(notification.accessKey)}
               >
                 <Link to={`/decode/${notification.picturePath}`} >
                   <ListItemText
-                    primary={`You have been granted access key: ${notification.accessKey}`}
+                    primary={`You have been granted access key`}
                     secondary={`for picture path: ${notification.picturePath}`}
                   />
                 </Link>

@@ -8,9 +8,30 @@ const DecodePage = () => {
     const [decodedData, setDecodedData] = useState("");
     const [accessKey, setAccessKey] = useState("");
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
-        console.log(accessKey)
-    }, [accessKey])
+        handleGetAccessKey();
+    }, [])
+
+    const handleGetAccessKey = async () => {
+        try {
+          const response = await fetch(`http://localhost:3001/posts/${imageUrl}/getAccessKey`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Failed to fetch access key');
+          }
+    
+          const data = await response.json();
+          setAccessKey(data.accessKey);
+        } catch (error) {
+          console.error('Error fetching access key:', error);
+        }
+      };
 
     const decodeImage = async () => {
         setLoading(true);
@@ -54,14 +75,6 @@ const DecodePage = () => {
                             height="auto"
                             alt="post"
                             src={`http://localhost:3001/assets/${imageUrl}`}
-                        />
-                        <TextField
-                            label="Access Key"
-                            variant="outlined"
-                            fullWidth
-                            margin="normal"
-                            value={accessKey}
-                            onChange={(e) => setAccessKey(e.target.value)}
                         />
                         {decodedData && (
                             <Typography variant="body1">Decoded Data: {decodedData}</Typography>
